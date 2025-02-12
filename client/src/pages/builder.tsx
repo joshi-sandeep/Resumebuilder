@@ -35,6 +35,7 @@ export default function Builder() {
         <header className="border-b">
           <div className="container mx-auto px-4 py-4">
             <h1 className="text-3xl font-bold">Resume Builder</h1>
+            <h1>owned by sandeep joshi</h1>
           </div>
         </header>
 
