@@ -20,7 +20,7 @@ export function ResumePreview() {
             </AvatarFallback>
           )}
         </Avatar>
-        
+
         <div>
           <h1 className="text-3xl font-bold">{data.personalInfo.fullName}</h1>
           <p className="text-muted-foreground">{data.personalInfo.email}</p>
@@ -74,7 +74,29 @@ export function ResumePreview() {
         ))}
       </div>
 
-      {/* Add Skills, Projects, and Certificates sections */}
+      <Separator />
+
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Certificates</h2>
+        {data.certificates.map((cert, i) => (
+          <Card key={i} className="p-4 mb-4">
+            <div className="flex justify-between mb-2">
+              <div>
+                <h3 className="font-medium">{cert.name}</h3>
+                <p className="text-muted-foreground">{cert.issuer}</p>
+                <p className="text-sm text-muted-foreground">{cert.date}</p>
+              </div>
+            </div>
+            {cert.fileUrl && (
+              <img 
+                src={cert.fileUrl} 
+                alt={`Certificate: ${cert.name}`}
+                className="mt-2 max-w-full h-auto rounded-lg"
+              />
+            )}
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

@@ -16,21 +16,19 @@ import { Plus, Trash2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { ImageUpload } from "./image-upload";
 
 export function ResumeForm() {
   const { toast } = useToast();
   const form = useFormContext<ResumeData>();
 
-  const { fields: eduFields, append: appendEdu, remove: removeEdu } = 
+  const { fields: eduFields, append: appendEdu, remove: removeEdu } =
     useFieldArray({ control: form.control, name: "education" });
 
-  const { fields: expFields, append: appendExp, remove: removeExp } = 
+  const { fields: expFields, append: appendExp, remove: removeExp } =
     useFieldArray({ control: form.control, name: "experience" });
 
-  const { fields: projFields, append: appendProj, remove: removeProj } = 
-    useFieldArray({ control: form.control, name: "projects" });
-
-  const { fields: certFields, append: appendCert, remove: removeCert } = 
+  const { fields: certFields, append: appendCert, remove: removeCert } =
     useFieldArray({ control: form.control, name: "certificates" });
 
   const mutation = useMutation({
@@ -54,6 +52,24 @@ export function ResumeForm() {
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Personal Information</h2>
+
+        <FormField
+          control={form.control}
+          name="profileImage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Profile Image</FormLabel>
+              <FormControl>
+                <ImageUpload
+                  label="Profile Image"
+                  onUpload={(url) => field.onChange(url)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="personalInfo.fullName"
@@ -121,17 +137,136 @@ export function ResumeForm() {
         />
       </div>
 
+      {/* Experience Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Experience</h2>
+          <Button
+            type="button"
+            onClick={() =>
+              appendExp({
+                company: "",
+                position: "",
+                startDate: "",
+                endDate: "",
+                description: "",
+              })
+            }
+          >
+            <Plus className="h-4 w-4 mr-2" /> Add Experience
+          </Button>
+        </div>
+        {expFields.map((field, index) => (
+          <Card key={field.id} className="p-4">
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeExp(index)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name={`experience.${index}.company`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`experience.${index}.position`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Position</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name={`experience.${index}.startDate`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Start Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`experience.${index}.endDate`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name={`experience.${index}.description`}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </Card>
+        ))}
+      </div>
+
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Education</h2>
-          <Button type="button" onClick={() => appendEdu({ institution: "", degree: "", field: "", startDate: "", endDate: "", gpa: "" })}>
+          <Button
+            type="button"
+            onClick={() =>
+              appendEdu({
+                institution: "",
+                degree: "",
+                field: "",
+                startDate: "",
+                endDate: "",
+                gpa: "",
+              })
+            }
+          >
             <Plus className="h-4 w-4 mr-2" /> Add Education
           </Button>
         </div>
         {eduFields.map((field, index) => (
           <Card key={field.id} className="p-4">
             <div className="flex justify-end">
-              <Button variant="ghost" size="icon" onClick={() => removeEdu(index)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeEdu(index)}
+              >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
@@ -211,6 +346,96 @@ export function ResumeForm() {
                     <FormLabel>GPA</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Certificates Section with Image Upload */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Certificates</h2>
+          <Button
+            type="button"
+            onClick={() =>
+              appendCert({
+                name: "",
+                issuer: "",
+                date: "",
+                fileUrl: "",
+              })
+            }
+          >
+            <Plus className="h-4 w-4 mr-2" /> Add Certificate
+          </Button>
+        </div>
+        {certFields.map((field, index) => (
+          <Card key={field.id} className="p-4">
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeCert(index)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name={`certificates.${index}.name`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Certificate Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`certificates.${index}.issuer`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Issuer</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`certificates.${index}.date`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`certificates.${index}.fileUrl`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Certificate Image</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        label={`Certificate ${index + 1}`}
+                        onUpload={(url) => field.onChange(url)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
