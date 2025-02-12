@@ -77,6 +77,35 @@ export function ResumePreview() {
       <Separator />
 
       <div>
+        <h2 className="text-xl font-semibold mb-4">Projects</h2>
+        {data.projects.map((project, i) => (
+          <Card key={i} className="p-4 mb-4">
+            <div className="mb-2">
+              <div className="flex justify-between">
+                <h3 className="font-medium">{project.name}</h3>
+                {project.link && (
+                  <a 
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-500 hover:underline"
+                  >
+                    View Project
+                  </a>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Technologies: {project.technologies}
+              </p>
+            </div>
+            <p>{project.description}</p>
+          </Card>
+        ))}
+      </div>
+
+      <Separator />
+
+      <div>
         <h2 className="text-xl font-semibold mb-4">Certificates</h2>
         {data.certificates.map((cert, i) => (
           <Card key={i} className="p-4 mb-4">

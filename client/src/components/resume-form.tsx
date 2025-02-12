@@ -28,6 +28,9 @@ export function ResumeForm() {
   const { fields: expFields, append: appendExp, remove: removeExp } =
     useFieldArray({ control: form.control, name: "experience" });
 
+  const { fields: projFields, append: appendProj, remove: removeProj } =
+    useFieldArray({ control: form.control, name: "projects" });
+
   const { fields: certFields, append: appendCert, remove: removeCert } =
     useFieldArray({ control: form.control, name: "certificates" });
 
@@ -50,6 +53,7 @@ export function ResumeForm() {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      {/* Personal Information Section */}
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Personal Information</h2>
 
@@ -240,6 +244,7 @@ export function ResumeForm() {
         ))}
       </div>
 
+      {/* Education Section */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Education</h2>
@@ -356,7 +361,94 @@ export function ResumeForm() {
         ))}
       </div>
 
-      {/* Certificates Section with Image Upload */}
+      {/* Projects Section */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Projects</h2>
+          <Button
+            type="button"
+            onClick={() =>
+              appendProj({
+                name: "",
+                description: "",
+                technologies: "",
+                link: "",
+              })
+            }
+          >
+            <Plus className="h-4 w-4 mr-2" /> Add Project
+          </Button>
+        </div>
+        {projFields.map((field, index) => (
+          <Card key={field.id} className="p-4">
+            <div className="flex justify-end">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeProj(index)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name={`projects.${index}.name`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`projects.${index}.technologies`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Technologies Used</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`projects.${index}.link`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Project Link (Optional)</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="url" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`projects.${index}.description`}
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Project Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Certificates Section */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Certificates</h2>
