@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient"; 
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
@@ -33,13 +32,13 @@ export function ImageUpload({ onUpload, label }: ImageUploadProps) {
 
     setIsUploading(true);
     try {
-      const res = await fetch("/api/upload", {
+      const res = await fetch(getApiUrl("/upload"), {
         method: "POST",
         body: formData,
       });
-      
+
       if (!res.ok) throw new Error("Upload failed");
-      
+
       const data = await res.json();
       onUpload(data.url);
       toast({
@@ -82,3 +81,10 @@ export function ImageUpload({ onUpload, label }: ImageUploadProps) {
     </div>
   );
 }
+
+// API URL Configuration
+export const API_URL = import.meta.env.PROD 
+  ? "/.netlify/functions"  // Corrected for Netlify Functions
+  : "/api";  // Development environment
+
+export const getApiUrl = (path: string) => `${API_URL}${path}`;
