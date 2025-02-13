@@ -11,12 +11,6 @@
   force = true
 
 [[redirects]]
-  from = "/api/upload"
-  to = "/.netlify/functions/api/upload"
-  status = 200
-  force = true
-
-[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
