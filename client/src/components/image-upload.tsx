@@ -33,7 +33,7 @@ export function ImageUpload({ onUpload, label }: ImageUploadProps) {
 
     setIsUploading(true);
     try {
-      const res = await fetch("/.netlify/functions/api/upload", {
+      const res = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
