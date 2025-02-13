@@ -1,9 +1,10 @@
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { getApiUrl } from "@/lib/config";
+import { Button } from "@/components/ui/button";
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
@@ -33,23 +34,34 @@ export function ImageUpload({ onUpload, label }: ImageUploadProps) {
 
     setIsUploading(true);
     try {
-      const res = await fetch("/api/upload", {
+      console.log('Uploading to:', getApiUrl('/api/upload')); // Debug log
+
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const res = await fetch('/api/upload', {
         method: "POST",
         body: formData,
       });
-      
-      if (!res.ok) throw new Error("Upload failed");
-      
+
+      if (!res.ok) {
+        const errorData = await res.text();
+        console.error('Upload failed:', errorData); // Debug log
+        throw new Error(errorData);
+      }
+
       const data = await res.json();
+      console.log('Upload response:', data); // Debug log
       onUpload(data.url);
       toast({
         title: "Upload successful",
         description: "Your image has been uploaded",
       });
     } catch (error) {
+      console.error('Upload error:', error); // Debug log
       toast({
         title: "Upload failed",
-        description: "Please try again",
+        description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     } finally {
